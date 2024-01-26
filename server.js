@@ -3,6 +3,10 @@ const axios = require('axios');
 const app = express();
 const PORT = 3000;
 
+// Express middleware to parse requests
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // fetch-data API endpoint
 app.get('/fetch-data', (req, res) => {
   try {
