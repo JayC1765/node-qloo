@@ -34,3 +34,8 @@ app.listen(PORT, (err) => {
     console.log(`Listening on PORT ${PORT}`);
   }
 });
+
+// event listener for server errors
+app.on('error', (err) => {
+  console.error(`Server encountered an error: ${err}`);
+});
