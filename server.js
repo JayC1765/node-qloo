@@ -1,9 +1,20 @@
 const express = require('express');
+const axios = require('axios');
 const app = express();
 const PORT = 3000;
 
-app.get('/', (req, res) => {
-  res.send('hello world');
+// fetch-data API endpoint
+app.get('/fetch-data', (req, res) => {
+  try {
+    axios.get('https://jsonplaceholder.typicode.com/users').then((response) => {
+      const { data } = response;
+      return res.status(200).json(data);
+    });
+  } catch (err) {
+    if (err) {
+      console.error(`Error fetching data, ${err}`);
+    }
+  }
 });
 
 app.listen(PORT, (err) => {
