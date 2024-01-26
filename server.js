@@ -21,6 +21,11 @@ app.get('/fetch-data', (req, res) => {
   }
 });
 
+// catch-all route handler for any requests to an unknown route
+app.use((req, res) =>
+  res.status(404).send("This is not the page you're looking for...")
+);
+
 app.listen(PORT, (err) => {
   if (err) {
     console.error(`Error while connecting to server: ${err}`);
