@@ -36,8 +36,24 @@ to the respective user, store each user in Redis for future queries, and returns
 app.get('/process-data', async (req, res) => {
   try {
     // Fetch all updated users and albums
-    const { data: allUsers } = await axios.get(usersURI);
-    const { data: allAlbums } = await axios.get(albumsURI);
+    const { data: allUsers } = await axios.get(usersURI, (err, result) => {
+      if (err) {
+        console.error('Error fetching all users: ', err);
+        throw err;
+      } else {
+        return result;
+      }
+    });
+
+    const { data: allAlbums } = await axios.get(albumsURI, (err, result) => {
+      if (err) {
+        console.error('Error fetching all albums: ', err);
+        throw err;
+      } else {
+        return result;
+      }
+    });
+
     const allUsersArr = [];
     const usersHash = {};
 
@@ -48,7 +64,7 @@ app.get('/process-data', async (req, res) => {
       usersHash[userId] = users;
     }
 
-    // Connect all albums with the respective users
+    // Associate all albums with the respective users
     for (const album of allAlbums) {
       const userId = `userId${album.userId}`;
       delete album.userId;
@@ -56,7 +72,10 @@ app.get('/process-data', async (req, res) => {
         usersHash[userId]['albums'] = usersHash[userId]['albums'] || [];
         usersHash[userId]['albums'].push(album);
       } else {
-        console.log('A user could not be found for this album');
+        console.error('A user could not be found for this album');
+        throw new Error(
+          'An album could not be associated with an existing user'
+        );
       }
     }
 
